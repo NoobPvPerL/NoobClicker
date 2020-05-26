@@ -69,9 +69,9 @@ void Widget::rightCPSChanged(){
 
 
 void Widget::click(){
-    if (Widget::toggler[0] == true and KEY_DOWN(VK_LBUTTON)){ mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);Sleep(1000/(int)random(leftCPS[0],leftCPS[1])-30); }
+    if (Widget::toggler[0] == true and KEY_DOWN(VK_LBUTTON)){ mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);Sleep((int)1000/random(leftCPS[0],leftCPS[1])-30); }
 
-    if (Widget::toggler[1] == true and KEY_DOWN(VK_RBUTTON)){ mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);Sleep(1000/(int)random(rightCPS[0],rightCPS[1])-30);}
+    if (Widget::toggler[1] == true and KEY_DOWN(VK_RBUTTON)){ mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);Sleep((int)1000/random(rightCPS[0],rightCPS[1])-30);}
 }
 
 
