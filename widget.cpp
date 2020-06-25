@@ -90,4 +90,3 @@ void Widget::RToggleChanger(){
 int Widget::random(int a,int b){
     return a+rand()%(b-a+1);
 }
-
