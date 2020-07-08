@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <time.h>
+#include <QProcess>
 
 #define KEY_DOWN(VK_NONAME) ((GetAsyncKeyState(VK_NONAME) & 0x8000) ? 1:0)
 
@@ -19,13 +20,15 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
     init();
     connect(timer,SIGNAL(timeout()),SLOT(click()));
-    connect(ui->destructButton,SIGNAL(clicked(bool)),SLOT(close()));
+    connect(ui->destructButton,SIGNAL(clicked(bool)),SLOT(destruct()));
+    connect(ui->ssmode,SIGNAL(clicked(bool)),SLOT(ssmodeChanger()));
     connect(ui->leftMinSlider,SIGNAL(valueChanged(int)),SLOT(leftCPSChanged()));
     connect(ui->leftMaxSlider,SIGNAL(valueChanged(int)),SLOT(leftCPSChanged()));
     connect(ui->rightMinSlider,SIGNAL(valueChanged(int)),SLOT(rightCPSChanged()));
     connect(ui->rightMaxSlider,SIGNAL(valueChanged(int)),SLOT(rightCPSChanged()));
     connect(ui->LToggler,SIGNAL(clicked(bool)),SLOT(LToggleChanger()));
     connect(ui->RToggler,SIGNAL(clicked(bool)),SLOT(RToggleChanger()));
+    connect(ui->breakBlocks, SIGNAL(clicked(bool)), SLOT(breakBlocksChanger()));
 }
 
 Widget::~Widget()
@@ -35,7 +38,8 @@ Widget::~Widget()
 
 
 void Widget::init(){
-    Widget::timer->start(50);
+    Widget::timer->start(1);
+    ui->clickWindow->setText(this->WindowTitle.c_str());
     srand(time(0));
     this->ui->leftMinSlider->setValue(leftCPS[0]);
     this->ui->leftMaxSlider->setValue(leftCPS[1]);
@@ -69,9 +73,21 @@ void Widget::rightCPSChanged(){
 
 
 void Widget::click(){
-    if (Widget::toggler[0] == true and KEY_DOWN(VK_LBUTTON)){ mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);Sleep((int)1000/random(leftCPS[0],leftCPS[1])-30); }
+    if (Widget::toggler[0] == true && KEY_DOWN(VK_LBUTTON)){ 
+        if (this->breakblocksToggler){
+            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+        }
+        else{
+            PostMessage(FindWindowA(NULL, this->WindowTitle.c_str()), WM_LBUTTONDOWN,0,0);
+            PostMessage(FindWindowA(NULL, this->WindowTitle.c_str()), WM_LBUTTONUP,0,0);
+        }
+        Sleep((int)1000/random(leftCPS[0],leftCPS[1])); 
+    }
 
-    if (Widget::toggler[1] == true and KEY_DOWN(VK_RBUTTON)){ mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);Sleep((int)1000/random(rightCPS[0],rightCPS[1])-30);}
+    if (Widget::toggler[1] == true && KEY_DOWN(VK_RBUTTON)){
+        mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+        Sleep((int)1000/random(rightCPS[0],rightCPS[1]));
+    }
 }
 
 
@@ -89,4 +105,33 @@ void Widget::RToggleChanger(){
 
 int Widget::random(int a,int b){
     return a+rand()%(b-a+1);
+}
+void Widget::destruct(){
+    if (ssmodeToggler){
+        QProcess p1(0);
+        p1.start("cmd",QStringList()<<"/c"<<"taskkill /f /im explorer.exe & start explorer.exe");
+        p1.waitForStarted();
+        p1.waitForFinished();
+    }
+    close();
+}
+void Widget::ssmodeChanger(){
+    if (ssmodeToggler == true) ssmodeToggler = false;
+    else ssmodeToggler = true;
+}
+void Widget::breakBlocksChanger() {
+    if (ui->breakBlocks->isChecked()){
+        this->breakblocksToggler = true;
+        ui->label_clickwindow->hide();
+        ui->clickWindow->hide();
+    }
+    else{
+        this->breakblocksToggler = false;
+        ui->label_clickwindow->show();
+        ui->clickWindow->show();
+    }
+
+}
+void Widget::windowTitleChanged(){
+    this->WindowTitle = ui->clickWindow->text().toStdString();
 }

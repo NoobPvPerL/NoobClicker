@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <QTimer>
+#include <string>
 using namespace std;
 
 QT_BEGIN_NAMESPACE
@@ -20,8 +21,10 @@ public:
     ~Widget();
     vector<bool> toggler {false,false};
     vector<int> leftCPS {9,13},rightCPS {9,13};
+    bool ssmodeToggler = false;
+    bool breakblocksToggler = false;
     QTimer* timer = new QTimer(this);
-
+    string WindowTitle = "Minecraft 1.7.10";
 private slots:
     void init();
     void leftCPSChanged();
@@ -30,8 +33,12 @@ private slots:
     void LToggleChanger();
     void RToggleChanger();
     int random(int a,int b);
-
+    void destruct();
+    void ssmodeChanger();
+    void breakBlocksChanger();
+    void windowTitleChanged();
 private:
     Ui::Widget *ui;
 };
+
 #endif // WIDGET_H

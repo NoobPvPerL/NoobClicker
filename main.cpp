@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     Widget w;
-    w.setWindowTitle("NoobClicker V1.0");
+    w.setWindowTitle("NoobClicker V2.0");
     w.show();
     return a.exec();
 }
